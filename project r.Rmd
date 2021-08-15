@@ -1,0 +1,206 @@
+---
+title: "Project1 r code"
+author: "Ziqian Wu"
+date: "14/08/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+load data and library
+```{r library}
+library(scales)
+library(dataPreparation)
+library(fitdistrplus)
+library(speedglm)
+library(performance)
+library(cvms)
+library(broom)
+library(tibble)
+library(faraway)
+
+library(dplyr)
+library(sf)
+library(curl)
+library(ggmap)
+library(tmap)
+library(tmaptools)
+```
+
+```{r}
+getwd()
+```
+
+
+```{r}
+data = read.csv("preprocessed_data/weather_and_yellow_2015_sample.csv")
+```
+
+```{r}
+head(data)
+```
+
+model 1 logistic regression classification
+predict the tip amount
+Find category data features
+
+```{r}
+
+data$Weather<- factor(data$Weather)
+
+gamma_cols=c("passenger_count","trip_distance","fare_amount","total_amount",
+                "Duration","Weather","tip_amount","Temperature_AVG")
+```
+
+
+split the data into training set and testing set
+
+```{r}
+## 80% of the sample size
+tip_data<-data[data$tip_amount>0,]
+smp_size <- floor(0.8 * nrow(tip_data))
+
+## set the seed to make your partition reproducible
+set.seed(123)
+train_ind <- sample(seq_len(nrow(tip_data)), size = smp_size)
+
+train <- tip_data[train_ind, gamma_cols]
+test <- tip_data[-train_ind, gamma_cols]
+
+x<-c("passenger_count","trip_distance","fare_amount","total_amount",
+    "Duration","Weather","Temperture_AVG")
+```
+
+It is not like a normal distribution, so we find the most like distribution
+```{r}
+hist(tip_data$tip_amount)
+```
+
+
+
+
+Training model 
+```{r}
+gamma_model = glm(tip_amount~.,family = Gamma(link="log"),data=train)
+summary(gamma_model)
+```
+
+
+Feature selection via AIC
+```{r}
+gamma_model1 = step(gamma_model,trace=0)
+summary(gamma_model1)
+```
+
+```{r}
+r2(gamma_model1)
+```
+
+
+```{r}
+testPred<-predict(gamma_model1,test)
+testPred[is.na(testPred)] <- 0
+
+mse_gamma_test<-mean((test$tip_amount - testPred)^2)  
+print(mse_gamma_test)
+
+```
+
+
+```{r}
+lm_model = lm(tip_amount~.,data=train)
+summary(lm_model)
+```
+
+```{r}
+lm_model1 = step(lm_model,trace=0)
+summary(lm_model1)
+```
+
+```{r}
+r2(lm_model1)
+```
+
+
+
+```{r}
+testPred<-predict(lm_model1,test)
+testPred[is.na(testPred)] <- 0
+
+mse_lm_test<-mean((test$tip_amount - testPred)^2) 
+print(mse_lm_test)
+
+```
+
+
+
+model assumption
+```{r}
+par(mfrow=c(2,2))
+plot(lm_model1)
+```
+
+
+```{r}
+par(mfrow=c(2,2))
+plot(gamma_model1)
+```
+
+final model
+```{r}
+x<-c("trip_distance","fare_amount","total_amount","Weather",
+     "tip_amount")
+final_lm_model=lm(tip_amount~., data=tip_data[,x],
+                  subset = -212188-325476-681870)
+summary(final_lm_model)
+```
+
+```{r}
+par(mfrow=c(2,2))
+plot(final_lm_model)
+```
+
+
+```{r}
+r2(final_lm_model)
+```
+
+predict 2016 data
+
+import 2016 data
+```{r}
+yellow_data_2016 = read.csv("preprocessed_data/weather_and_yellow_2016_sample.csv")
+```
+
+
+```{r}
+yellow_data_2016$Weather<- factor(yellow_data_2016$Weather)
+
+key_cols=c("trip_distance","fare_amount","total_amount",
+            "Weather","tip_amount")
+```
+
+
+```{r}
+tip_data_2016<-yellow_data_2016[yellow_data_2016$tip_amount>0,]
+test_2016 <- tip_data_2016[, key_cols]
+```
+
+predict 2016 data
+
+```{r}
+Pred_2016_lm<-predict(final_lm_model,test_2016)
+Pred_2016_lm[is.na(Pred_2016_lm)] <- 0
+
+mse_lm_pred_2016<-mean((test_2016$tip_amount - Pred_2016_lm)^2)  
+print(mse_lm_pred_2016)
+```
+
+
+
+
+```{r}
+
+

@@ -25,13 +25,13 @@ _Change this to fit your needs when you have started the project._
 - `code`: Keep all notebooks and scripts in this folder. Running the notebookls 
     from start to end:
     - downfile.ipynb for "Extracting Data" from the website and store them in "raw_data".
-    - Yellow taxi preprocessed data for "Preprocessing" and "Exploratory Data Analysis" 
+    - Yellow taxi preprocessed data.ipynb for "Preprocessing" and "Exploratory Data Analysis" 
     for the yellow taxi data
-    - Green taxi preprocessed data for "Preprocessing" and "Exploratory Data Analysis" 
+    - Green taxi preprocessed data.ipynb for "Preprocessing" and "Exploratory Data Analysis" 
     for the green taxi data
-    - Yellow taxi data visualisation for "Analysis and Visualisation" for the 
+    - Yellow taxi data visualisation.ipynb for "Analysis and Visualisation" for the 
     yellow taxi data.
-    - Green taxi data visualisation for "Analysis and Visualisation" for the 
+    - Green taxi data visualisation.ipynb for "Analysis and Visualisation" for the 
     green taxi data.
 -  `Project r.Rmd` for "Statistical Modelling", fit a model to predict future data.
 

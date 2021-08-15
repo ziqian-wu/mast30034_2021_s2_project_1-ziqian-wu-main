@@ -36,6 +36,5 @@ _Change this to fit your needs when you have started the project._
     green taxi data.
     -Yellow taxi data prediction.ipynb : merge yellow taxi data and weather data
     and do some data engineering. Prepare for "Statistical Modelling"
--  Aftering running all the notebooks, run `Project 1 prediction.Rmd` for "Statistical 
-Modelling", to fit a model to predict future data. we can check `Project-1-prediction.pdf`
-to see the R code result.
+-  Aftering running all the notebooks, run `Project 1 prediction.Rmd` to fit a 
+statistical model to predict future data. 

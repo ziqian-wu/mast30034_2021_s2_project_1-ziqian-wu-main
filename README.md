@@ -2,7 +2,7 @@
 - Student Name: Ziqian Wu
 - Student ID: 1067683
 - Due Date: Friday 16th of August 11:59:00 am (AEST).
-- Report Link: 
+- Report Link: https://www.overleaf.com/read/nkmsqwhckqyn
 
 # Dependencies
 - Language: Python 3.8.5 and R 4.1106
@@ -37,5 +37,4 @@ _Change this to fit your needs when you have started the project._
     -Yellow taxi data prediction.ipynb : merge yellow taxi data and weather data
     and do some data engineering. Prepare for "Statistical Modelling"
 -  Aftering running all the notebooks, run `Project 1 prediction.Rmd` for "Statistical 
-Modelling", to fit a model to predict future data. We can as view the model in 
-"Project-1-prediction.html"
+Modelling", to fit a model to predict future data. 

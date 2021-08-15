@@ -7,7 +7,8 @@
 # Dependencies
 - Language: Python 3.8.5 and R 4.1106
 - Packages: pandas,os,urllib,numpy,seaborn,matplotlib,folium,warnings,bokeh
-- library:
+- library: dataPreparation,fitdistrplus,speedglm,performance,cvms,broom,tibble,
+            dplyr,sf,curl,tmap,tmaptools
 
 
 
@@ -22,16 +23,19 @@ _Change this to fit your needs when you have started the project._
 - `raw_data`: Contains all the raw data files.  
 - `preprocessed_data`: Contains all the preprocessed data files. 
 - `plots`: Output and save all your figures here.
-- `code`: Keep all notebooks and scripts in this folder. Running the notebookls 
+- `code`: Keep all notebooks and scripts in this folder. Running the notebooks 
     from start to end:
     - downfile.ipynb for "Extracting Data" from the website and store them in "raw_data".
-    - Yellow taxi preprocessed data.ipynb for "Preprocessing" and "Exploratory Data Analysis" 
+    - Yellow taxi preprocessed data.ipynb :"Preprocessing" and "Exploratory Data Analysis" 
     for the yellow taxi data
-    - Green taxi preprocessed data.ipynb for "Preprocessing" and "Exploratory Data Analysis" 
+    - Green taxi preprocessed data.ipynb : "Preprocessing" and "Exploratory Data Analysis" 
     for the green taxi data
-    - Yellow taxi data visualisation.ipynb for "Analysis and Visualisation" for the 
+    - Yellow taxi data visualisation.ipynb : "Analysis and Visualisation" for the 
     yellow taxi data.
-    - Green taxi data visualisation.ipynb for "Analysis and Visualisation" for the 
+    - Green taxi data visualisation.ipynb : "Analysis and Visualisation" for the 
     green taxi data.
--  `Project r.Rmd` for "Statistical Modelling", fit a model to predict future data.
-
+    -Yellow taxi data prediction.ipynb : merge yellow taxi data and weather data
+    and do some data engineering. Prepare for "Statistical Modelling"
+-  Aftering running all the notebooks, run `Project 1 prediction.Rmd` for "Statistical 
+Modelling", to fit a model to predict future data. We can as view the model in 
+"Project-1-prediction.html"

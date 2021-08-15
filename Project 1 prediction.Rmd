@@ -1,0 +1,190 @@
+---
+title: "Project1 R code"
+author: "Ziqian Wu"
+date: "14/08/2021"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+load library
+```{r library}
+library(dataPreparation)
+library(fitdistrplus)
+library(speedglm)
+library(performance)
+library(cvms)
+library(broom)
+library(tibble)
+library(dplyr)
+library(sf)
+library(curl)
+library(tmap)
+library(tmaptools)
+```
+
+load data
+```{r}
+data = read.csv("preprocessed_data/weather_and_yellow_2015_sample.csv")
+```
+
+
+Try to use gamma regression and linear regression to predict the tip amount
+factorize the categorical attribute
+```{r}
+
+data$Weather<- factor(data$Weather)
+
+model_cols=c("passenger_count","trip_distance","fare_amount","total_amount",
+                "Duration","Weather","tip_amount","Temperature_AVG")
+```
+
+
+split the data into training set and testing set
+
+```{r}
+tip_data<-data[data$tip_amount>0,]
+smp_size <- floor(0.8 * nrow(tip_data))
+
+set.seed(123)
+train_ind <- sample(seq_len(nrow(tip_data)), size = smp_size)
+
+train <- tip_data[train_ind, model_cols]
+test <- tip_data[-train_ind, model_cols]
+
+x<-c("passenger_count","trip_distance","fare_amount","total_amount",
+    "Duration","Weather","Temperture_AVG")
+```
+
+It is not like a normal distribution, so we need to find the most like distribution
+```{r}
+hist(tip_data$tip_amount)
+```
+
+
+
+
+Fitting gamma regression model 
+It shows that some features should be dropped off to make the model better
+```{r}
+gamma_model = glm(tip_amount~.,family = Gamma(link="log"),data=train)
+summary(gamma_model)
+```
+
+
+Find a better gamma regression model via AIC feature selection
+```{r}
+gamma_model1 = step(gamma_model,trace=0)
+summary(gamma_model1)
+```
+
+Evaluate the model after feature selection
+```{r}
+r2(gamma_model1)
+```
+
+
+```{r}
+testPred<-predict(gamma_model1,test)
+testPred[is.na(testPred)] <- 0
+
+mse_gamma_test<-mean((test$tip_amount - testPred)^2)  
+print(mse_gamma_test)
+
+```
+
+Fitting linear regression model 
+It shows that some features should be dropped off to make the model better
+```{r}
+lm_model = lm(tip_amount~.,data=train)
+summary(lm_model)
+```
+
+Find a better linear regression model via AIC feature selection
+```{r}
+lm_model1 = step(lm_model,trace=0)
+summary(lm_model1)
+```
+
+evaluate linear regression model
+```{r}
+r2(lm_model1)
+```
+
+
+```{r}
+testPred<-predict(lm_model1,test)
+testPred[is.na(testPred)] <- 0
+
+mse_lm_test<-mean((test$tip_amount - testPred)^2) 
+print(mse_lm_test)
+
+```
+
+By evaluating these two regression models, the linear regression model has better
+MSE and R-squared score
+
+visualize these two models
+```{r}
+par(mfrow=c(2,2))
+plot(lm_model1)
+```
+It shows that the residual distribution of linear regression model is fairly uniform.
+The line of normal QQ plot is close to y=x.
+
+```{r}
+par(mfrow=c(2,2))
+plot(gamma_model1)
+```
+It shows that the residual distribution of gamma regression model is not fairly uniform.
+The line of normal QQ plot is not close to y=x.
+
+
+we choose the linear regression model as the final model
+```{r}
+x<-c("trip_distance","fare_amount","total_amount","Weather",
+     "tip_amount")
+final_lm_model=lm(tip_amount~., data=tip_data[,x],
+                  subset = -212188-325476-681870)
+summary(final_lm_model)
+```
+
+model evaluation
+```{r}
+r2(final_lm_model)
+```
+
+
+import 2016 data
+```{r}
+yellow_data_2016 = read.csv("preprocessed_data/weather_and_yellow_2016_sample.csv")
+```
+
+
+```{r}
+yellow_data_2016$Weather<- factor(yellow_data_2016$Weather)
+
+key_cols=c("trip_distance","fare_amount","total_amount",
+            "Weather","tip_amount")
+
+tip_data_2016<-yellow_data_2016[yellow_data_2016$tip_amount>0,]
+test_2016 <- tip_data_2016[, key_cols]
+```
+
+predict and evaluate 2016 data
+
+```{r}
+Pred_2016_lm<-predict(final_lm_model,test_2016)
+Pred_2016_lm[is.na(Pred_2016_lm)] <- 0
+
+mse_lm_pred_2016<-mean((test_2016$tip_amount - Pred_2016_lm)^2)  
+print(mse_lm_pred_2016)
+```
+
+The MSE of the predicted model is small, which indicates that the model is good.
+

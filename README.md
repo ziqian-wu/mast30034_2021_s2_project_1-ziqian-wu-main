@@ -34,7 +34,7 @@ _Change this to fit your needs when you have started the project._
     yellow taxi data.
     - Green taxi data visualisation.ipynb : "Analysis and Visualisation" for the 
     green taxi data.
-    -Yellow taxi data prediction.ipynb : merge yellow taxi data and weather data
+    - Yellow taxi data prediction.ipynb : merge yellow taxi data and weather data
     and do some data engineering. Prepare for "Statistical Modelling"
 -  Aftering running all the notebooks, run `Project 1 prediction.Rmd` to fit a 
 statistical model to predict future data. 
